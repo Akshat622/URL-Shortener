@@ -1,12 +1,11 @@
 import express from "express"
-import { createLink } from "../controllers/linkController.js"
-import { Router } from "express"
-import protect from "../middleware/authMiddleware.js"
-import { getmyLinks } from "../controllers/linkController.js"
+import { createLink, getMyLinks } from "../controllers/linkController.js"
+import protect from "../middleware/auth.js"
+import { validateCreateLink } from "../middleware/validators.js"
 
-const router=Router.express()
+const router = express.Router()
 
-router.post('/',protect,getmyLinks);
+router.post("/", protect, validateCreateLink, createLink)
+router.get("/", protect, getMyLinks)
 
 export default router
-
