@@ -46,6 +46,15 @@ export const redirectLink= async (req,res) =>{
                 success:false,
                 message:"Link not found"
             })}
+
+            orignialUrl=link.originalUrl
+
+            await redis.set(`url:{code}`,orignialUrl,'EX',3600)
+
+            link.clickcount +=1
+             await link.save()
+
+            res.redirect(301,originalUrl)
         }
 
     }
