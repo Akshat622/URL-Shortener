@@ -24,6 +24,8 @@ const linkSchema=new mongoose.Schema({
 
 },{timestamps:true})
 
+
+linkSchema.index({owner:1,createdAt:-1})
 const Link=mongoose.model("Link",linkSchema);
 
 export default Link

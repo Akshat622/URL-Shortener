@@ -1,6 +1,7 @@
 import nanoid from "nanoid"
 import Link from "../models/Link.js"
-import Link from "../models/Link.js"
+import redis from "../config/redis.js"
+
 
 export const createLink = async (req,res)=>{
     try{
@@ -34,19 +35,43 @@ export const redirectLink= async (req,res) =>{
     try{
         const {code}=req.params
 
-        const link=await Link.foundOne({code})
+        let orignialUrl= await redis.get(`url:${code}`)
 
-        if(!link){
+
+        if(!orignialUrl){
+
+            const link=await Link.findOne({code})
+            if(!link){
             return res.status(404).json({
                 success:false,
                 message:"Link not found"
-            })
+            })}
         }
 
     }
     catch(error){
-        return res.status
+        return res.status(500).json({
+            success:false,
+            meesage:error.message
+        })
     }
 
 
+}
+
+export const getmyLinks= async (req,res)=>{
+    try{
+        const links=await Link.find({owner:req.userId}).sort({createdAt:-1})
+        res.status(200).json({
+            success:true,
+            count:links.length,
+            data:links,
+        })
+
+}
+catch(error){
+    res.status(500).json({
+    success:false,
+    message:error.message})
+}
 }
